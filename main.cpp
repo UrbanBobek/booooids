@@ -6,7 +6,7 @@
 
 static const int window_w = 1600;
 static const int window_h = 900;
-static const int steps_per_frame_normal = 10;
+static const int steps_per_frame_normal = 1;
 
 int main(int argc, char* argv[]) {
     // Create the universe (object)
@@ -39,9 +39,10 @@ int main(int argc, char* argv[]) {
 
         
         // Apply boid relations and draw
+        window.clear();
         for(int i = 0; i < steps_per_frame_normal; i++){
-            // const float opacity = float(i + 1) / float(steps_per_frame_normal);
-            const float opacity = 255;
+            const float opacity = float(i + 1) / float(steps_per_frame_normal);
+            // const float opacity = 255;
             universe.step();
             universe.draw(window, opacity);
         }
