@@ -10,7 +10,7 @@ static const int steps_per_frame_normal = 1;
 
 int main(int argc, char* argv[]) {
     // Create the universe (object)
-    Universe universe(30, window_w, window_h);
+    Universe universe(90, window_w, window_h);
 
     // Create a video mode object
     sf::VideoMode vm(window_w, window_h);

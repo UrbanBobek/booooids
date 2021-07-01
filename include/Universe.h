@@ -21,7 +21,8 @@ public:
 
     Boids boid;
 private:
-    std::vector<Boid> m_boids;
+    // std::vector<Boid> m_boids;
+    std::vector<Boids> m_boids;
     
 
     float m_width;

@@ -7,21 +7,21 @@
 
 struct Boid{
     // Positon and orientation
-    float x, y, phi;
-    
-    std::vector<float> pos{0,0};
-    std::vector<float> move{0,0};
+    std::vector<float> pos{0,0,0};
+    // Velocity
+    std::vector<float> vel{0,0};
+    // Acceleration
+    std::vector<float> acc{0,0};
 
-    // Linear and angular velocity
-    float v, w;
-    // Desired angle
-    float phi_des;
 };
 class Boids{
 public:
     Boids();
 
+    void align(std::vector<Boids> boids, std::vector<float> &steer);
+
     void SetBoidLength(float length) { side_length = length; }
+    void SetMaxVelocity(float vel) { max_velocity = vel; }
     void SetPosition(float x, float y);
     void SetColor(sf::Color color);
     void SetOpacity(float opacity);
@@ -33,9 +33,19 @@ public:
     int side_length;
     float radius_of_vision, radius_of_vision_sq;
     float angle_of_vision;
+    float max_velocity;
+    float max_force;
 
     sf::ConvexShape boid;
+    // Positon and orientation
+    std::vector<float> pos{0,0,0};
+    // Velocity
+    std::vector<float> vel{0,0};
+    // Acceleration
+    std::vector<float> acc{0,0};
 private:
+    
+
     sf::Color boid_color;
     
 };

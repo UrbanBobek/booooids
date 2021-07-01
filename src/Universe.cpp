@@ -2,7 +2,7 @@
 
 Universe::Universe(size_t num_boids, int width, int height){
     SetSize(float(width), float(height));
-    SetLinearVelocity(1);
+    SetLinearVelocity(2);
     SetPopulation(num_boids);
 
     m_center_x = m_width * 0.5f;
@@ -11,97 +11,75 @@ Universe::Universe(size_t num_boids, int width, int height){
 }
 
 void Universe::step(){
+    
+
     for(size_t i = 0; i < m_boids.size(); i++){
         // Current Boid
-        Boid& b = m_boids[i];
-        float avoidance_angle = 0;
-        int num_of_neighbours = 0;
-        b.move[0] = 0; b.move[1] = 0;
+        Boids& b = m_boids[i];
+
         // Calculate interactions with other boids
-        for(size_t j = 0; j < m_boids.size(); j++){
-            if(i != j){
-                const Boid& bb = m_boids[j];
+        std::vector<float> steer{0,0};
+        b.align(m_boids, steer);
+        b.acc[0] = steer[0];
+        b.acc[1] = steer[1];
 
-                float dx = b.pos[0] - bb.pos[0];
-                float dy = b.pos[1] - bb.pos[1];
-                // float dx = b.x - bb.x;
-                // float dy = b.y - bb.y;
-                float d = dx*dx + dy*dy;
-
-                if(d < boid.radius_of_vision_sq){
-                    avoidance_angle += bb.phi;
-
-                    b.move[0] += dx / d;
-                    b.move[1] += dy / d;
-                    
-                    num_of_neighbours++;
-                }
-                   
-            }
-        }
-        if(num_of_neighbours){
-            avoidance_angle = wrapToPi(avoidance_angle);  
-            b.phi_des = avoidance_angle;
-        }
-        else{
-            b.phi_des = b.phi;
-            b.move[0] =  b.v * cos(b.phi); b.move[1] =  b.v * sin(b.phi);
-        }   
+        // std::cout <<"ID: " << i <<  " vel: " << b.vel[0] << " " << b.vel[1] ;
+        // std::cout <<  " acc: " << b.acc[0] << " " << b.acc[1] << std::endl;
     }
-
+    
     // Update position
     for(size_t i = 0; i < m_boids.size(); i++){
         // Current Boid
-        Boid& b = m_boids[i];
+        Boids& b = m_boids[i];
+
+        if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * abs(b.vel[0]) / b.vel[0];
+        if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * abs(b.vel[1]) / b.vel[1];
 
         // Update position and velocity
-        //TODO:
-        float x_old = b.pos[0], y_old = b.pos[1];
-        b.x += b.v * cos(b.phi);
-        b.y += b.v * sin(b.phi);
+        b.pos[0] += b.vel[0]; 
+        b.pos[1] += b.vel[1]; 
+
+        b.vel[0] += b.acc[0]; 
+        b.vel[1] += b.acc[1]; 
+
         
-        float F = 0.001;
-        b.x += b.move[0]*F; 
-        b.y += b.move[1]*F; 
-        
-        b.pos[0] = b.x;
-        b.pos[1] = b.y;
 
-        // b.phi = atan2(y_old - b.pos[1], x_old - b.pos[0]);
-        b.phi = atan2(b.move[1], b.move[0]);
-
-        b.v = b.v;
-
-        // float e = wrapToPi(b.phi - b.phi_des);
-        // float K = 0.001;
-        // b.w = K*e;
-        // b.phi += b.w;
+        // Calculate phi:
+        b.pos[2] = atan2(b.vel[1], b.vel[0]);
 
         //Check for wall collisions
         if (m_wrap) {
-            if (b.x < 0) {
-                b.x += m_width;
-            } else if (b.x >= m_width) {
-                b.x -= m_width;
+            if (b.pos[0] < 0) {
+                b.pos[0] += m_width;
+            } else if (b.pos[0] >= m_width) {
+                b.pos[0] -= m_width;
             }
-            if (b.y < 0) {
-                b.y += m_height;
-            } else if (b.y >= m_height) {
-                b.y -= m_height;
+            if (b.pos[1] < 0) {
+                b.pos[1] += m_height;
+            } else if (b.pos[1] >= m_height) {
+                b.pos[1] -= m_height;
             }
-
         }
+
     }
+
+     for(size_t i = 0; i < m_boids.size(); i++){
+        Boids& b = m_boids[i];
+        if(b.pos[0] > m_width || b.pos[0] < 0 || b.pos[1] > m_height || b.pos[1] < 0){
+            std::cout << "BITCH IM MISSING" << std::endl;
+        }
+     }
+    
 
 }
 
 void Universe::draw(sf::RenderWindow& window, float opacity) {
     for (size_t i = 0; i < m_boids.size(); ++i) {
         // Current Boid
-        const Boid b = m_boids[i];
-        const float x = b.x ;
-        const float y = b.y ;
-        const float phi = b.phi ; 
+        const Boids b = m_boids[i];
+        const float x = b.pos[0] ;
+        const float y = b.pos[1] ;
+        const float phi = b.pos[2] ; 
 
         boid.SetPosition(x, y);
         boid.SetRotation(phi);
@@ -109,6 +87,8 @@ void Universe::draw(sf::RenderWindow& window, float opacity) {
         boid.SetOpacity(opacity);
 
         window.draw(boid.boid);
+
+        // std::cout << i << ": " << x << " " << y << std::endl;
     }
 
 }
@@ -119,17 +99,19 @@ void Universe::SetPopulation(size_t num_boids){
     std::cout << m_boids.size()<< std::endl;
     std::cout <<m_height<< std::endl;
     std::cout << m_width<< std::endl;
+    srand(time(NULL));
     for (size_t i = 0; i < m_boids.size(); ++i) {
         // Current Boid
-        Boid& b = m_boids[i];
+        Boids& b = m_boids[i];
 
-        b.x = m_width/2 + ((float) rand())/RAND_MAX * m_width/2;
-        b.y = m_height/2 +((float) rand())/RAND_MAX * m_height/2;
-        b.phi = ((float) rand())/RAND_MAX * 6.2831853;
-        b.v = linear_velocity;
+        
+        b.pos[0] =  ((float) rand())/RAND_MAX * m_width; // m_width/2;
+        b.pos[1] =  ((float) rand())/RAND_MAX * m_height; // m_height/2;
+        b.pos[2] = ((float) rand())/RAND_MAX * 6.2831853;
 
-        b.pos[0] = b.x;
-        b.pos[1] = b.y;
+        b.vel[0] = (((float) rand())/RAND_MAX * linear_velocity) * cos(b.pos[0]);
+        b.vel[1] = (((float) rand())/RAND_MAX * linear_velocity) * sin(b.pos[0]);
+
         // std::cout << "JEBA" << std::endl;
         // std::cout << i << ": " << b.x << " " << b.y << std::endl;
     }
@@ -137,9 +119,9 @@ void Universe::SetPopulation(size_t num_boids){
 }
 
 float Universe::GetBoidX(int index) const {
-  return m_boids[index].x;
+  return m_boids[index].pos[0];
 }
 
 float Universe::GetBoidY(int index) const {
-  return m_boids[index].y;
+  return m_boids[index].pos[1];
 }
