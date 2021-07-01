@@ -20,6 +20,8 @@ private:
     float m_width;
     float m_height;
 
+    float m_center_x;
+    float m_center_y;
     bool m_wrap;
 
 };
