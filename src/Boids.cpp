@@ -5,8 +5,9 @@ Boids::Boids(){
     CreateBoidShape();
     SetPosition(100, 100);
 
-    radius_of_vision = 100; // in pixels
-    angle_of_vision = 180; // in degrees
+    radius_of_vision = 150; // in pixels
+    radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
+    angle_of_vision = 180; // in 
 }
 
 void Boids::CreateBoidShape(){

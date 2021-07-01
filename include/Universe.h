@@ -1,5 +1,6 @@
 #pragma once
 #include "Boids.h"
+#include "utils.h"
 
 class Universe{
 public:

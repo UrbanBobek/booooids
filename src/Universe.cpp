@@ -2,7 +2,7 @@
 
 Universe::Universe(size_t num_boids, int width, int height){
     SetSize(float(width), float(height));
-    SetLinearVelocity(0.01);
+    SetLinearVelocity(1);
     SetPopulation(num_boids);
 
     m_center_x = m_width * 0.5f;
@@ -14,16 +14,39 @@ void Universe::step(){
     for(size_t i = 0; i < m_boids.size(); i++){
         // Current Boid
         Boid& b = m_boids[i];
-
+        float avoidance_angle = 0;
+        int num_of_neighbours = 0;
+        b.move[0] = 0; b.move[1] = 0;
         // Calculate interactions with other boids
         for(size_t j = 0; j < m_boids.size(); j++){
-            const Boid& bb = m_boids[j];
+            if(i != j){
+                const Boid& bb = m_boids[j];
 
-            float dx = b.x - bb.x;
-            float dy = b.y - bb.y;
+                float dx = b.pos[0] - bb.pos[0];
+                float dy = b.pos[1] - bb.pos[1];
+                // float dx = b.x - bb.x;
+                // float dy = b.y - bb.y;
+                float d = dx*dx + dy*dy;
 
+                if(d < boid.radius_of_vision_sq){
+                    avoidance_angle += bb.phi;
 
+                    b.move[0] += dx / d;
+                    b.move[1] += dy / d;
+                    
+                    num_of_neighbours++;
+                }
+                   
+            }
         }
+        if(num_of_neighbours){
+            avoidance_angle = wrapToPi(avoidance_angle);  
+            b.phi_des = avoidance_angle;
+        }
+        else{
+            b.phi_des = b.phi;
+            b.move[0] =  b.v * cos(b.phi); b.move[1] =  b.v * sin(b.phi);
+        }   
     }
 
     // Update position
@@ -33,10 +56,26 @@ void Universe::step(){
 
         // Update position and velocity
         //TODO:
+        float x_old = b.pos[0], y_old = b.pos[1];
         b.x += b.v * cos(b.phi);
         b.y += b.v * sin(b.phi);
-        b.phi += 0.00001;
+        
+        float F = 0.001;
+        b.x += b.move[0]*F; 
+        b.y += b.move[1]*F; 
+        
+        b.pos[0] = b.x;
+        b.pos[1] = b.y;
+
+        // b.phi = atan2(y_old - b.pos[1], x_old - b.pos[0]);
+        b.phi = atan2(b.move[1], b.move[0]);
+
         b.v = b.v;
+
+        // float e = wrapToPi(b.phi - b.phi_des);
+        // float K = 0.001;
+        // b.w = K*e;
+        // b.phi += b.w;
 
         //Check for wall collisions
         if (m_wrap) {
@@ -84,10 +123,13 @@ void Universe::SetPopulation(size_t num_boids){
         // Current Boid
         Boid& b = m_boids[i];
 
-        b.x = m_width/2 + ((float) rand())/RAND_MAX * 100;
-        b.y = m_height/2 +((float) rand())/RAND_MAX * 100;
-        b.phi = 0;
+        b.x = m_width/2 + ((float) rand())/RAND_MAX * m_width/2;
+        b.y = m_height/2 +((float) rand())/RAND_MAX * m_height/2;
+        b.phi = ((float) rand())/RAND_MAX * 6.2831853;
         b.v = linear_velocity;
+
+        b.pos[0] = b.x;
+        b.pos[1] = b.y;
         // std::cout << "JEBA" << std::endl;
         // std::cout << i << ": " << b.x << " " << b.y << std::endl;
     }

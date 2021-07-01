@@ -6,8 +6,16 @@
 #include "iostream"
 
 struct Boid{
+    // Positon and orientation
     float x, y, phi;
-    float v;
+    
+    std::vector<float> pos{0,0};
+    std::vector<float> move{0,0};
+
+    // Linear and angular velocity
+    float v, w;
+    // Desired angle
+    float phi_des;
 };
 class Boids{
 public:
@@ -18,16 +26,16 @@ public:
     void SetColor(sf::Color color);
     void SetOpacity(float opacity);
     void SetRotation(float phi);
-    void SetRadiusOfVision(float r) { radius_of_vision = r; }
+    void SetRadiusOfVision(float r) { radius_of_vision = r; radius_of_vision_sq = r*r;}
     void SetAngleOfVision(float theta) { angle_of_vision = theta; }
     void CreateBoidShape();
 
     int side_length;
+    float radius_of_vision, radius_of_vision_sq;
+    float angle_of_vision;
+
     sf::ConvexShape boid;
 private:
     sf::Color boid_color;
-    
-    float radius_of_vision;
-    float angle_of_vision;
     
 };

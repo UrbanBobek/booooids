@@ -10,7 +10,7 @@ static const int steps_per_frame_normal = 1;
 
 int main(int argc, char* argv[]) {
     // Create the universe (object)
-    Universe universe(2, window_w, window_h);
+    Universe universe(30, window_w, window_h);
 
     // Create a video mode object
     sf::VideoMode vm(window_w, window_h);
@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     sf::RenderWindow window(vm, "booooids", sf::Style::Default);
     sf::View view(sf::FloatRect(0, 0, window_w, window_h));
     window.setView(view);
+    window.setFramerateLimit(100);
     sf::Clock clock;
 
 
