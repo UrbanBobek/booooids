@@ -6,6 +6,7 @@ public:
     Universe(size_t num_boids, int width, int height);
 
     void SetSize(float width, float height) { m_width = width; m_height = height; }
+    void SetLinearVelocity(float velocity) { linear_velocity = velocity; }
     void SetPopulation(size_t num_boids);
     void ToggleWrap() { m_wrap = !m_wrap; }
 
@@ -13,12 +14,14 @@ public:
     float GetBoidY(int index) const;
 
     void step();
-    void draw(sf::RenderWindow& window, float opacity) const;
+    void draw(sf::RenderWindow& window, float opacity);
 
     float rad2deg(float rad){ return rad * 180 / 3.141592; }
+
+    Boids boid;
 private:
     std::vector<Boid> m_boids;
-    Boids boids;
+    
 
     float m_width;
     float m_height;
@@ -26,5 +29,7 @@ private:
     float m_center_x;
     float m_center_y;
     bool m_wrap;
+
+    float linear_velocity;
 
 };

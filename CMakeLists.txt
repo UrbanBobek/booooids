@@ -27,7 +27,7 @@ find_package(SFML 2.5
   )
 
 # Compile executable
-add_executable(boids main.cpp src/Universe.cpp)
+add_executable(boids main.cpp src/Universe.cpp src/Boids.cpp include/Universe.h include/Boids.h )
 
 # Set include directory search paths
 target_include_directories(boids 

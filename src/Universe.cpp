@@ -2,7 +2,9 @@
 
 Universe::Universe(size_t num_boids, int width, int height){
     SetSize(float(width), float(height));
+    SetLinearVelocity(0.01);
     SetPopulation(num_boids);
+
     m_center_x = m_width * 0.5f;
     m_center_y = m_height * 0.5f;
     m_wrap = true;
@@ -30,12 +32,11 @@ void Universe::step(){
         Boid& b = m_boids[i];
 
         // Update position and velocity
+        //TODO:
         b.x += b.v * cos(b.phi);
         b.y += b.v * sin(b.phi);
-        //TODO:
-        b.phi += b.w;
+        b.phi += 0.00001;
         b.v = b.v;
-        b.w = b.w;
 
         //Check for wall collisions
         if (m_wrap) {
@@ -55,37 +56,27 @@ void Universe::step(){
 
 }
 
-void Universe::draw(sf::RenderWindow& window, float opacity) const {
-    
-
-    //Temp
-    sf::CircleShape triangle(boids.side_length, 3);
-    float rad = 5;
-    // circle.setOrigin(rad, rad);
-    triangle.setOrigin(boids.side_length, boids.side_length);
+void Universe::draw(sf::RenderWindow& window, float opacity) {
     for (size_t i = 0; i < m_boids.size(); ++i) {
         // Current Boid
-        const Boid& b = m_boids[i];
+        const Boid b = m_boids[i];
         const float x = b.x ;
         const float y = b.y ;
-        const float phi = b.phi ;
+        const float phi = b.phi ; 
 
-        std::cout << x << " " << y << std::endl;
-        // std::cout << b.x << " " << b.y << std::endl;
+        boid.SetPosition(x, y);
+        boid.SetRotation(phi);
+        boid.SetColor(sf::Color(0, 0, 255));
+        boid.SetOpacity(opacity);
 
-        triangle.setPosition(x, y);
-        triangle.setRotation( phi * 180 / 3.141592 + 90);
-        sf::Color col = sf::Color(255, 0,0);
-        col.a = uint8_t(opacity * 255);
-        triangle.setFillColor(col);
-        window.draw(triangle);
+        window.draw(boid.boid);
     }
 
 }
 
 void Universe::SetPopulation(size_t num_boids){
     m_boids.resize(num_boids);
-    
+
     std::cout << m_boids.size()<< std::endl;
     std::cout <<m_height<< std::endl;
     std::cout << m_width<< std::endl;
@@ -93,11 +84,12 @@ void Universe::SetPopulation(size_t num_boids){
         // Current Boid
         Boid& b = m_boids[i];
 
-        b.x = m_width/2;
-        b.y = m_height/2;
+        b.x = m_width/2 + ((float) rand())/RAND_MAX * 100;
+        b.y = m_height/2 +((float) rand())/RAND_MAX * 100;
         b.phi = 0;
-        b.v = 0.05;
-        b.w = 0.0001;
+        b.v = linear_velocity;
+        // std::cout << "JEBA" << std::endl;
+        // std::cout << i << ": " << b.x << " " << b.y << std::endl;
     }
 
 }

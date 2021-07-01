@@ -7,11 +7,27 @@
 
 struct Boid{
     float x, y, phi;
-    float v, w;
+    float v;
 };
 class Boids{
 public:
-    int side_length = 10;
+    Boids();
+
+    void SetBoidLength(float length) { side_length = length; }
+    void SetPosition(float x, float y);
+    void SetColor(sf::Color color);
+    void SetOpacity(float opacity);
+    void SetRotation(float phi);
+    void SetRadiusOfVision(float r) { radius_of_vision = r; }
+    void SetAngleOfVision(float theta) { angle_of_vision = theta; }
+    void CreateBoidShape();
+
+    int side_length;
+    sf::ConvexShape boid;
 private:
-    // std::vector<float> m_
+    sf::Color boid_color;
+    
+    float radius_of_vision;
+    float angle_of_vision;
+    
 };
