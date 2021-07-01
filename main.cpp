@@ -6,6 +6,7 @@
 
 static const int window_w = 1600;
 static const int window_h = 900;
+static const int steps_per_frame_normal = 10;
 
 int main(int argc, char* argv[]) {
     // Create the universe (object)
@@ -18,11 +19,14 @@ int main(int argc, char* argv[]) {
     sf::RenderWindow window(vm, "booooids", sf::Style::Default);
     sf::View view(sf::FloatRect(0, 0, window_w, window_h));
     window.setView(view);
+    sf::Clock clock;
 
 
 
-    // Handle closing the window
+    // Main loop
     while(window.isOpen()) {
+
+        // Handle button events
         sf::Event Event;
         while(window.pollEvent(Event)) {
             if (Event.type == sf::Event::Closed)
@@ -32,6 +36,16 @@ int main(int argc, char* argv[]) {
                     window.close();
             }
         }
+
+        
+        // Apply boid relations and draw
+        window.clear();
+        for(int i = 0; i < steps_per_frame_normal; i++){
+            const float opacity = float(i + 1) / float(steps_per_frame_normal);
+            universe.step();
+            universe.draw(window, opacity);
+        }
+
         window.display();
     }
     

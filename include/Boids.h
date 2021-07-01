@@ -1,5 +1,8 @@
 #pragma once
+
+#include <SFML/Graphics.hpp>
 #include <vector>
+#include "math.h"
 
 struct Boid{
     float x, y, phi;

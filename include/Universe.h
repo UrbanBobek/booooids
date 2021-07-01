@@ -12,6 +12,9 @@ public:
     float GetBoidX(int index) const;
     float GetBoidY(int index) const;
 
+    void step();
+    void draw(sf::RenderWindow& window, float opacity) const;
+
 private:
     std::vector<Boid> m_boids;
     float m_width;
