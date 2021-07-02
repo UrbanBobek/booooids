@@ -20,28 +20,34 @@ void Universe::step(){
         // Boid& b = m_boids[i];
 
         // Calculate interactions with other boids
-        std::vector<float> align_vec{0,0};
-        std::vector<float> cohesion_vec{0,0};
-        std::vector<float> separation_vec{0,0};
-        b.acc[0] = 0; b.acc[1] = 0;
+        std::vector<float> steer_vec{0,0};
+        
+        b.flock_behaviour(m_boids, steer_vec);
+        b.acc[0] += steer_vec[0];
+        b.acc[1] += steer_vec[1];
 
-        b.align(m_boids, align_vec);
-        b.acc[0] += align_vec[0];
-        b.acc[1] += align_vec[1];
+        // std::vector<float> align_vec{0,0};
+        // std::vector<float> cohesion_vec{0,0};
+        // std::vector<float> separation_vec{0,0};
+        // b.acc[0] = 0; b.acc[1] = 0;
 
-        b.cohesion(m_boids, cohesion_vec);
-        b.acc[0] += cohesion_vec[0];
-        b.acc[1] += cohesion_vec[1];
+        // b.align(m_boids, align_vec);
+        // b.acc[0] += align_vec[0]*0.6;
+        // b.acc[1] += align_vec[1]*0.6;
 
-        b.separation(m_boids, separation_vec);
-        b.acc[0] += separation_vec[0];
-        b.acc[1] += separation_vec[1];
+        // b.cohesion(m_boids, cohesion_vec);
+        // b.acc[0] += cohesion_vec[0]*1.5;
+        // b.acc[1] += cohesion_vec[1]*1.5;
+
+        // b.separation(m_boids, separation_vec);
+        // b.acc[0] += separation_vec[0]*2;
+        // b.acc[1] += separation_vec[1]*2;
 
         // std::cout <<"ID: " << i <<  " vel: " << b.vel[0] << " " << b.vel[1] ;
         // std::cout <<  " acc: " << b.acc[0] << " " << b.acc[1] << std::endl;
 
-        if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * b.vel[0] / abs(b.vel[0]);
-        if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * b.vel[1] / abs(b.vel[1]);
+        // if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * b.vel[0] / abs(b.vel[0]);
+        // if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * b.vel[1] / abs(b.vel[1]);
     }
     
     // Update position
@@ -75,7 +81,8 @@ void Universe::step(){
                 b.pos[1] -= m_height;
             }
         }
-
+        // Reset acc
+        b.acc[0] = 0; b.acc[1] = 0;
     }
 
 }

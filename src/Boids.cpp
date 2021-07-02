@@ -2,10 +2,14 @@
 
 Boids::Boids(){
     max_velocity = 4;
-    max_force = 0.1;
+    max_force = 0.05;
     radius_of_vision = 80; // in pixels
     radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
     angle_of_vision = 180; // in 
+
+    align_w = 0.6;
+    cohesion_w = 2.2;
+    separation_w = 2.0;
 
     enable_direction_plot = false;
     enable_perceptionRadius = false;
@@ -16,6 +20,62 @@ Boids::Boids(){
     CreateBoidPerceptionRadius();
 
     SetPosition(100, 100); 
+}
+
+void Boids::flock_behaviour(std::vector<Boids> boids, std::vector<float> &steer){
+    std::vector<float> allign{0,0};
+    std::vector<float> cohesion{0,0};
+    std::vector<float> separation{0,0};
+    std::vector<float> desired{0,0};
+    int num_of_neighbours = 0;
+    for(int i = 0; i < boids.size(); i++){
+        Boids& b = boids[i];
+        float d = pow(b.pos[0] - pos[0], 2) + pow(b.pos[1] - pos[1], 2);
+        if(d != 0 && d < radius_of_vision_sq){
+            allign[0] += b.vel[0];
+            allign[1] += b.vel[1];
+
+            cohesion[0] += b.pos[0];
+            cohesion[1] += b.pos[1];
+
+            float dx = pos[0] - b.pos[0];
+            float dy = pos[1] - b.pos[1];
+            dx /= d;
+            dy /= d;
+            separation[0] += dx;
+            separation[1] += dy;
+        
+            num_of_neighbours++;
+        }
+    }
+
+    if(num_of_neighbours > 0){
+        // Alignment
+        calculateAverage(allign, num_of_neighbours);
+        setMagnitude(allign, max_velocity);
+        substractVect(allign, vel);
+
+        // Cohesion
+        calculateAverage(cohesion, num_of_neighbours);
+        substractVect(cohesion, pos);
+        setMagnitude(cohesion, max_velocity);
+
+        // Separation
+        calculateAverage(separation, num_of_neighbours);
+        setMagnitude(separation, max_velocity);
+
+        // Sum the forces with weights
+        desired[0] += allign[0] * align_w +  cohesion[0] * cohesion_w  + separation[0] *separation_w;
+        desired[1] += allign[1] * align_w +  cohesion[1] * cohesion_w  + separation[1] *separation_w;
+
+        // Limit force to max_force
+        float F = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
+        if(F > max_force){
+            desired[0] = desired[0] / F * max_force;
+            desired[1] = desired[1] / F * max_force;
+        }
+    }
+    steer = desired;
 }
 
 void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){

@@ -4,7 +4,7 @@
 #include <vector>
 #include "math.h"
 #include "iostream"
-
+#include "utils.h"
 struct Boid{
     // Positon and orientation
     std::vector<float> pos{0,0,0};
@@ -22,10 +22,14 @@ public:
     void align(std::vector<Boids> boids, std::vector<float> &steer);
     void cohesion(std::vector<Boids> boids, std::vector<float> &steer);
     void separation(std::vector<Boids> boids, std::vector<float> &steer);
+    void flock_behaviour(std::vector<Boids> boids, std::vector<float> &steer);
 
     // Setters
     void SetBoidLength(float length) { side_length = length; }
     void SetMaxVelocity(float vel) { max_velocity = vel; }
+    void SetAlignWeight(float w) { align_w = w; }
+    void SetCohesionWeight(float w) { cohesion_w = w; }
+    void SetSeparationWeight(float w) { separation_w = w; }
     void SetPosition(float x, float y);
     void SetColor(sf::Color color);
     void SetOpacity(float opacity);
@@ -35,6 +39,7 @@ public:
     void SetAngleOfVision(float theta) { angle_of_vision = theta; }
     void SetDrawDirection(bool enable) { enable_direction_plot = enable; }
     void SetDrawPerceptionRadius(bool enable) { enable_perceptionRadius = enable; }
+    
 
     // Drawing
     void CreateBoidShape();
@@ -56,6 +61,11 @@ public:
     bool enable_perceptionRadius;
 
     float avg_vel_phi;
+
+    // Behaviour weights
+    float align_w;
+    float cohesion_w;
+    float separation_w;
 
     // Positon and orientation
     std::vector<float> pos{0,0,0};
