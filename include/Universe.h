@@ -24,7 +24,6 @@ private:
     // std::vector<Boid> m_boids;
     std::vector<Boids> m_boids;
     
-
     float m_width;
     float m_height;
 
@@ -33,5 +32,4 @@ private:
     bool m_wrap;
 
     float linear_velocity;
-
 };

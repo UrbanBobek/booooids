@@ -1,8 +1,8 @@
 #include "Boids.h"
 
 Boids::Boids(){
-    max_velocity = 1;
-    max_force = 2;
+    max_velocity = 2;
+    max_force = 0.02;
     radius_of_vision = 100; // in pixels
     radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
     angle_of_vision = 180; // in 
@@ -21,7 +21,8 @@ Boids::Boids(){
 void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
     std::vector<float> desired{0,0};
     int num_of_neighbours = 0;
-    for(Boids b : boids){
+    for(int i = 0; i < boids.size(); i++){
+        Boids& b = boids[i];
         float d = pow(b.pos[0] - pos[0], 2) + pow(b.pos[1] - pos[1], 2);
         if(d != 0 && d < radius_of_vision_sq){
             desired[0] += b.vel[0];
@@ -29,6 +30,7 @@ void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
             num_of_neighbours++;
         }
     }
+
     if(num_of_neighbours > 0){
         // Calculate average
         desired[0] /= num_of_neighbours;
@@ -41,12 +43,9 @@ void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
             desired[1] = desired[1] / d * max_velocity;
         }
         
-        // Subtract desired velocity from current velocity
+        // Subtract current velocitydesired velocity from desired velocity
         desired[0] = desired[0] - vel[0];
-        desired[0] = desired[1] - vel[1];
-
-        // desired[0] *= -1;
-        // desired[1] *= -1;
+        desired[1] = desired[1] - vel[1];
 
         // Limit force to max_force
         float F = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
@@ -54,9 +53,10 @@ void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
             desired[0] = desired[0] / F * max_force;
             desired[1] = desired[1] / F * max_force;
         }
-
+        if(abs(desired[0]) > max_velocity) desired[0] = max_velocity * desired[0] / abs(desired[0]);
+        if(abs(desired[1]) > max_velocity) desired[1] = max_velocity * desired[1] / abs(desired[1]);
     }
-    
+
     steer = desired;
 }
 
@@ -162,11 +162,11 @@ void Boids::SetPosition(float x, float y){
 void Boids::SetRotation(float phi){
     float p = phi * 180 / 3.141592;
     boid.setRotation( p );
+}
 
+void Boids::SetDirectionRotation(float phi){
+    float p = phi * 180 / 3.141592;
     direction.setRotation( p );
-    // if(enable_perceptionRadius){
-    //     direction.setRotation( p );
-    // } 
 }
 
 void Boids::SetColor(sf::Color color){

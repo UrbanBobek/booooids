@@ -18,15 +18,18 @@ class Boids{
 public:
     Boids();
 
+    // Behavioral functions
     void align(std::vector<Boids> boids, std::vector<float> &steer);
     void cohesion(std::vector<Boid> boids, std::vector<float> &steer);
 
+    // Setters
     void SetBoidLength(float length) { side_length = length; }
     void SetMaxVelocity(float vel) { max_velocity = vel; }
     void SetPosition(float x, float y);
     void SetColor(sf::Color color);
     void SetOpacity(float opacity);
     void SetRotation(float phi);
+    void SetDirectionRotation(float phi);
     void SetRadiusOfVision(float r) { radius_of_vision = r; radius_of_vision_sq = r*r;}
     void SetAngleOfVision(float theta) { angle_of_vision = theta; }
     void SetDrawDirection(bool enable) { enable_direction_plot = enable; }
@@ -51,6 +54,8 @@ public:
     bool enable_direction_plot;
     bool enable_perceptionRadius;
 
+    float avg_vel_phi;
+
     // Positon and orientation
     std::vector<float> pos{0,0,0};
     // Velocity
@@ -58,8 +63,6 @@ public:
     // Acceleration
     std::vector<float> acc{0,0};
 private:
-    
-
     sf::Color boid_color;
     
 };
