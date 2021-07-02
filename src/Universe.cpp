@@ -2,7 +2,7 @@
 
 Universe::Universe(size_t num_boids, int width, int height){
     SetSize(float(width), float(height));
-    SetLinearVelocity(1.0);
+    SetLinearVelocity(2);
     SetPopulation(num_boids);
 
     m_center_x = m_width * 0.5f;
@@ -22,19 +22,26 @@ void Universe::step(){
         // Calculate interactions with other boids
         std::vector<float> align_vec{0,0};
         std::vector<float> cohesion_vec{0,0};
+        std::vector<float> separation_vec{0,0};
+        b.acc[0] = 0; b.acc[1] = 0;
 
         b.align(m_boids, align_vec);
-        b.acc[0] = align_vec[0];
-        b.acc[1] = align_vec[1];
-        // boid.cohesion(m_boids, cohesion_vec);
-        // b.acc[0] = cohesion_vec[0];
-        // b.acc[1] = cohesion_vec[1];
+        b.acc[0] += align_vec[0];
+        b.acc[1] += align_vec[1];
+
+        b.cohesion(m_boids, cohesion_vec);
+        b.acc[0] += cohesion_vec[0];
+        b.acc[1] += cohesion_vec[1];
+
+        b.separation(m_boids, separation_vec);
+        b.acc[0] += separation_vec[0];
+        b.acc[1] += separation_vec[1];
 
         // std::cout <<"ID: " << i <<  " vel: " << b.vel[0] << " " << b.vel[1] ;
         // std::cout <<  " acc: " << b.acc[0] << " " << b.acc[1] << std::endl;
 
-        // if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * b.vel[0] / abs(b.vel[0]);
-        // if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * b.vel[1] / abs(b.vel[1]);
+        if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * b.vel[0] / abs(b.vel[0]);
+        if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * b.vel[1] / abs(b.vel[1]);
     }
     
     // Update position

@@ -1,9 +1,9 @@
 #include "Boids.h"
 
 Boids::Boids(){
-    max_velocity = 2;
-    max_force = 0.02;
-    radius_of_vision = 100; // in pixels
+    max_velocity = 4;
+    max_force = 0.1;
+    radius_of_vision = 80; // in pixels
     radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
     angle_of_vision = 180; // in 
 
@@ -43,7 +43,7 @@ void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
             desired[1] = desired[1] / d * max_velocity;
         }
         
-        // Subtract current velocitydesired velocity from desired velocity
+        // Subtract current velocity from desired velocity
         desired[0] = desired[0] - vel[0];
         desired[1] = desired[1] - vel[1];
 
@@ -60,10 +60,11 @@ void Boids::align(std::vector<Boids> boids, std::vector<float> &steer){
     steer = desired;
 }
 
-void Boids::cohesion(std::vector<Boid> boids, std::vector<float> &steer){
+void Boids::cohesion(std::vector<Boids> boids, std::vector<float> &steer){
     std::vector<float> desired{0,0};
     int num_of_neighbours = 0;
-    for(Boid b : boids){
+    for(int i = 0; i < boids.size(); i++){
+        Boids& b = boids[i];
         float d = pow(b.pos[0] - pos[0], 2) + pow(b.pos[1] - pos[1], 2);
         if(d != 0 && d < radius_of_vision_sq){
             desired[0] += b.pos[0];
@@ -71,14 +72,15 @@ void Boids::cohesion(std::vector<Boid> boids, std::vector<float> &steer){
             num_of_neighbours++;
         }
     }
+
     if(num_of_neighbours > 0){
         // Calculate average
         desired[0] /= num_of_neighbours;
         desired[1] /= num_of_neighbours;
 
-        // Subtract average position from current position
+        // Subtract current position from average position
         desired[0] = desired[0] - pos[0];
-        desired[0] = desired[1] - pos[1];
+        desired[1] = desired[1] - pos[1];
 
         // Set magnitude to max_velocity
         float d = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
@@ -86,13 +88,6 @@ void Boids::cohesion(std::vector<Boid> boids, std::vector<float> &steer){
             desired[0] = desired[0] / d * max_velocity;
             desired[1] = desired[1] / d * max_velocity;
         }
-        
-        // Subtract desired velocity from current velocity
-        desired[0] = desired[0] - vel[0];
-        desired[0] = desired[1] - vel[1];
-
-        // desired[0] *= -1;
-        // desired[1] *= -1;
 
         // Limit force to max_force
         float F = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
@@ -100,9 +95,53 @@ void Boids::cohesion(std::vector<Boid> boids, std::vector<float> &steer){
             desired[0] = desired[0] / F * max_force;
             desired[1] = desired[1] / F * max_force;
         }
-
+        if(abs(desired[0]) > max_velocity) desired[0] = max_velocity * desired[0] / abs(desired[0]);
+        if(abs(desired[1]) > max_velocity) desired[1] = max_velocity * desired[1] / abs(desired[1]);
     }
-    
+
+    steer = desired;
+}
+
+void Boids::separation(std::vector<Boids> boids, std::vector<float> &steer){
+    std::vector<float> desired{0,0};
+    int num_of_neighbours = 0;
+    for(int i = 0; i < boids.size(); i++){
+        Boids& b = boids[i];
+        float d = pow(b.pos[0] - pos[0], 2) + pow(b.pos[1] - pos[1], 2);
+        if(d != 0 && d < radius_of_vision_sq){
+            float dx = pos[0] - b.pos[0];
+            float dy = pos[1] - b.pos[1];
+            dx /= d;
+            dy /= d;
+            desired[0] += dx;
+            desired[1] += dy;
+
+            num_of_neighbours++;
+        }
+    }
+
+    if(num_of_neighbours > 0){
+        // Calculate average
+        desired[0] /= num_of_neighbours;
+        desired[1] /= num_of_neighbours;
+
+        // Set magnitude to max_velocity
+        float d = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
+        if(d > 0){
+            desired[0] = desired[0] / d * max_velocity;
+            desired[1] = desired[1] / d * max_velocity;
+        }
+
+        // Limit force to max_force
+        float F = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
+        if(F > max_force){
+            desired[0] = desired[0] / F * max_force;
+            desired[1] = desired[1] / F * max_force;
+        }
+        // if(abs(desired[0]) > max_velocity) desired[0] = max_velocity * desired[0] / abs(desired[0]);
+        // if(abs(desired[1]) > max_velocity) desired[1] = max_velocity * desired[1] / abs(desired[1]);
+    }
+
     steer = desired;
 }
 

@@ -20,7 +20,8 @@ public:
 
     // Behavioral functions
     void align(std::vector<Boids> boids, std::vector<float> &steer);
-    void cohesion(std::vector<Boid> boids, std::vector<float> &steer);
+    void cohesion(std::vector<Boids> boids, std::vector<float> &steer);
+    void separation(std::vector<Boids> boids, std::vector<float> &steer);
 
     // Setters
     void SetBoidLength(float length) { side_length = length; }
