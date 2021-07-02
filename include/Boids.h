@@ -19,6 +19,7 @@ public:
     Boids();
 
     void align(std::vector<Boids> boids, std::vector<float> &steer);
+    void cohesion(std::vector<Boids> boids, std::vector<float> &steer);
 
     void SetBoidLength(float length) { side_length = length; }
     void SetMaxVelocity(float vel) { max_velocity = vel; }
