@@ -19,7 +19,7 @@ public:
     Boids();
 
     void align(std::vector<Boids> boids, std::vector<float> &steer);
-    void cohesion(std::vector<Boids> boids, std::vector<float> &steer);
+    void cohesion(std::vector<Boid> boids, std::vector<float> &steer);
 
     void SetBoidLength(float length) { side_length = length; }
     void SetMaxVelocity(float vel) { max_velocity = vel; }
@@ -29,7 +29,14 @@ public:
     void SetRotation(float phi);
     void SetRadiusOfVision(float r) { radius_of_vision = r; radius_of_vision_sq = r*r;}
     void SetAngleOfVision(float theta) { angle_of_vision = theta; }
+    void SetDrawDirection(bool enable) { enable_direction_plot = enable; }
+    void SetDrawPerceptionRadius(bool enable) { enable_perceptionRadius = enable; }
+
+    // Drawing
     void CreateBoidShape();
+    void CreateBoidDirectionVect();
+    void CreateBoidPerceptionRadius();
+    void drawBoid(sf::RenderWindow& window);
 
     int side_length;
     float radius_of_vision, radius_of_vision_sq;
@@ -38,6 +45,12 @@ public:
     float max_force;
 
     sf::ConvexShape boid;
+    sf::RectangleShape direction;
+    sf::CircleShape perceptionRadius;
+
+    bool enable_direction_plot;
+    bool enable_perceptionRadius;
+
     // Positon and orientation
     std::vector<float> pos{0,0,0};
     // Velocity
