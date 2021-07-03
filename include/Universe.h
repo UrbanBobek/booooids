@@ -9,15 +9,24 @@ public:
     void SetSize(float width, float height) { m_width = width; m_height = height; }
     void SetLinearVelocity(float velocity) { linear_velocity = velocity; }
     void SetPopulation(size_t num_boids);
-    void ToggleWrap() { m_wrap = !m_wrap; }
 
     float GetBoidX(int index) const;
     float GetBoidY(int index) const;
+
+    void ToggleWrap() { m_wrap = !m_wrap; }
 
     void step();
     void draw(sf::RenderWindow& window, float opacity);
 
     float rad2deg(float rad){ return rad * 180 / 3.141592; }
+
+    //UI functions
+    void toggleAlignment();
+    void toggleCohesion();
+    void toggleSeparation();
+    void togglePerception();
+    void increaseRadius();
+    void decreaseRadius();
 
     Boids boid;
 private:
@@ -32,4 +41,7 @@ private:
     bool m_wrap;
 
     float linear_velocity;
+
+    int current_boid;
+    uint8_t toggle_perception_state;
 };

@@ -39,6 +39,10 @@ public:
     void SetAngleOfVision(float theta) { angle_of_vision = theta; }
     void SetDrawDirection(bool enable) { enable_direction_plot = enable; }
     void SetDrawPerceptionRadius(bool enable) { enable_perceptionRadius = enable; }
+
+    void enableAlignment(bool enable) { enable_align = enable; }
+    void enableCohesion(bool enable) { enable_cohesion = enable; }
+    void enableSeparation(bool enable) { enable_separation = enable; }
     
 
     // Drawing
@@ -66,6 +70,9 @@ public:
     float align_w;
     float cohesion_w;
     float separation_w;
+    bool enable_align;
+    bool enable_cohesion;
+    bool enable_separation;
 
     // Positon and orientation
     std::vector<float> pos{0,0,0};

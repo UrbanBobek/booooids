@@ -10,7 +10,7 @@ static const int steps_per_frame_normal = 1;
 
 int main(int argc, char* argv[]) {
     // Create the universe (object)
-    Universe universe(60, window_w, window_h);
+    Universe universe(90, window_w, window_h);
 
     // Create a video mode object
     sf::VideoMode vm(window_w, window_h);
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     sf::RenderWindow window(vm, "booooids", sf::Style::Default);
     sf::View view(sf::FloatRect(0, 0, window_w, window_h));
     window.setView(view);
-    window.setFramerateLimit(100);
+    window.setFramerateLimit(50);
     sf::Clock clock;
 
 
@@ -28,15 +28,45 @@ int main(int argc, char* argv[]) {
     while(window.isOpen()) {
 
         // Handle button events
-        sf::Event Event;
-        while(window.pollEvent(Event)) {
-            if (Event.type == sf::Event::Closed)
+        sf::Event event;
+        while(window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
                 window.close();
-            if (Event.type == sf::Event::KeyPressed) {
-                if (Event.key.code == sf::Keyboard::Escape)
+            else if (event.type == sf::Event::KeyPressed) {
+                switch (event.key.code) {
+                case sf::Keyboard::Escape:
                     window.close();
+                    break;
+                case sf::Keyboard::A:
+                    universe.toggleAlignment();
+                    break;
+                case sf::Keyboard::C:
+                    universe.toggleCohesion();
+                    break;
+                case sf::Keyboard::S:
+                    universe.toggleSeparation();
+                    break;
+                case sf::Keyboard::P:
+                    universe.togglePerception();
+                    break;
+                case sf::Keyboard::I:
+                    universe.increaseRadius();
+                    break;
+                case sf::Keyboard::O:
+                    universe.decreaseRadius();
+                    break;
+                
+                default:
+                    break;
+                }
             }
-        }
+            else if (event.type == sf::Event::KeyReleased) {
+                const sf::Keyboard::Key keycode = event.key.code;
+                // if (keycode == sf::Keyboard::Space) {
+                // steps_per_frame = steps_per_frame_normal;
+            }
+      }
+        
 
         
         // Apply boid relations and draw

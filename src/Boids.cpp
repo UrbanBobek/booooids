@@ -1,15 +1,18 @@
 #include "Boids.h"
 
 Boids::Boids(){
-    max_velocity = 4;
-    max_force = 0.05;
-    radius_of_vision = 80; // in pixels
+    max_velocity = 8;
+    max_force = 0.2;
+    radius_of_vision = 100; // in pixels
     radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
     angle_of_vision = 180; // in 
 
-    align_w = 0.6;
-    cohesion_w = 2.2;
-    separation_w = 2.0;
+    align_w = 1;
+    cohesion_w = 0.15;
+    separation_w = 1.9;
+    enable_align = true;
+    enable_cohesion = true;
+    enable_separation = true;
 
     enable_direction_plot = false;
     enable_perceptionRadius = false;
@@ -31,15 +34,13 @@ void Boids::flock_behaviour(std::vector<Boids> boids, std::vector<float> &steer)
     for(int i = 0; i < boids.size(); i++){
         Boids& b = boids[i];
         float d = pow(b.pos[0] - pos[0], 2) + pow(b.pos[1] - pos[1], 2);
-        if(d != 0 && d < radius_of_vision_sq){
-            allign[0] += b.vel[0];
-            allign[1] += b.vel[1];
-
-            cohesion[0] += b.pos[0];
-            cohesion[1] += b.pos[1];
+        if(d != 0 && d < radius_of_vision*radius_of_vision){
+            addVect(allign, b.vel);
+            addVect(cohesion, b.pos);
 
             float dx = pos[0] - b.pos[0];
             float dy = pos[1] - b.pos[1];
+            d = sqrt(d);
             dx /= d;
             dy /= d;
             separation[0] += dx;
@@ -57,16 +58,18 @@ void Boids::flock_behaviour(std::vector<Boids> boids, std::vector<float> &steer)
 
         // Cohesion
         calculateAverage(cohesion, num_of_neighbours);
-        substractVect(cohesion, pos);
+        substractVect(cohesion, pos); 
+        substractVect(cohesion, vel); 
         setMagnitude(cohesion, max_velocity);
 
         // Separation
         calculateAverage(separation, num_of_neighbours);
+        substractVect(separation, vel);
         setMagnitude(separation, max_velocity);
-
+        
         // Sum the forces with weights
-        desired[0] += allign[0] * align_w +  cohesion[0] * cohesion_w  + separation[0] *separation_w;
-        desired[1] += allign[1] * align_w +  cohesion[1] * cohesion_w  + separation[1] *separation_w;
+        desired[0] += allign[0]*align_w*enable_align + cohesion[0]*cohesion_w*enable_cohesion + separation[0]*separation_w*enable_separation;
+        desired[1] += allign[1]*align_w*enable_align + cohesion[1]*cohesion_w*enable_cohesion + separation[1]*separation_w*enable_separation;
 
         // Limit force to max_force
         float F = sqrt( pow(desired[0], 2) + pow(desired[1], 2) );
@@ -231,14 +234,14 @@ void Boids::CreateBoidPerceptionRadius(){
     perceptionRadius.setOrigin(radius_of_vision, radius_of_vision);
     perceptionRadius.setFillColor(sf::Color(0, 0, 0, 0));
     perceptionRadius.setOutlineThickness(1);
-    perceptionRadius.setOutlineColor(sf::Color(40, 40, 40));
+    perceptionRadius.setOutlineColor(sf::Color(80, 80, 80));
 }
 
 void Boids::drawBoid(sf::RenderWindow& window){
-    if(enable_direction_plot){
+    if(enable_perceptionRadius){
         window.draw(perceptionRadius);
     }
-    if(enable_perceptionRadius){
+    if(enable_direction_plot){
         window.draw(direction);
     } 
 

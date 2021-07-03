@@ -29,6 +29,19 @@ void substractVect(std::vector<float> &vect1, std::vector<float> &vect2){
         }
     }
     else{
+        std::cout << "vector size is not equal" << std::endl;
         exit(1);
     }
 }
+void addVect(std::vector<float> &vect1, std::vector<float> &vect2){
+    if(vect1.size() <= vect2.size()){
+        for(int i = 0; i < vect1.size(); i++){
+            vect1[i] += vect2[i];
+        }
+    }
+    else{
+        std::cout << "vector size is not equal" << std::endl;
+        exit(1);
+    }
+}
+
