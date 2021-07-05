@@ -54,8 +54,7 @@ public:
     int side_length;
     float radius_of_vision, radius_of_vision_sq;
     float angle_of_vision;
-    float max_velocity;
-    float max_force;
+    
 
     sf::ConvexShape boid;
     sf::RectangleShape direction;
@@ -70,6 +69,13 @@ public:
     float align_w;
     float cohesion_w;
     float separation_w;
+    float max_velocity;
+    float max_force;
+    float align_w_def = 1;
+    float cohesion_w_def = 0.15;
+    float separation_w_def = 1.9;
+    float max_velocity_def = 8;
+    float max_force_def = 0.2;
     bool enable_align;
     bool enable_cohesion;
     bool enable_separation;
@@ -82,5 +88,4 @@ public:
     std::vector<float> acc{0,0};
 private:
     sf::Color boid_color;
-    
 };

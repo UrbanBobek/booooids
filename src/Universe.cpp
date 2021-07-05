@@ -159,7 +159,7 @@ void  Universe::toggleSeparation(){
 void  Universe::togglePerception(){
     toggle_perception_state++;
 
-    if(toggle_perception_state > 4)
+    if(toggle_perception_state > 5)
         toggle_perception_state = 0;
 
     switch (toggle_perception_state)
@@ -173,34 +173,74 @@ void  Universe::togglePerception(){
         std::cout << "Displaying perception radius DISABLED" << std::endl;
         break;
     case 1:
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.SetDrawPerceptionRadius(false);
+            b.SetDrawDirection(false);
+        }
         m_boids[ current_boid ].SetDrawPerceptionRadius(true);
         std::cout << "Displaying ONE perception radius" << std::endl;
         break;
     case 2:
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.SetDrawPerceptionRadius(false);
+            b.SetDrawDirection(false);
+        }
         m_boids[ current_boid ].SetDrawPerceptionRadius(true);
         m_boids[ current_boid ].SetDrawDirection(true);
         std::cout << "Displaying ONE perception radius and direction" << std::endl;
         break;
     case 3:
-        m_boids[ current_boid ].SetDrawDirection(false);
+        m_boids[ current_boid ].SetDrawPerceptionRadius(false);
         for (size_t i = 0; i < m_boids.size(); ++i) {
             Boids& b = m_boids[i];
             b.SetDrawDirection(true);
         }
-        std::cout << "Displaying ALL perception radii" << std::endl;
+        std::cout << "Displaying ALL directions" << std::endl;
         break;
     case 4:
         for (size_t i = 0; i < m_boids.size(); ++i) {
             Boids& b = m_boids[i];
             b.SetDrawPerceptionRadius(true);
-            b.SetDrawDirection(true);
+            b.SetDrawDirection(false);
         }
         std::cout << "Displaying ALL perception radii" << std::endl;
+        break;
+    case 5:
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.SetDrawPerceptionRadius(true);
+            b.SetDrawDirection(true);
+        }
+        std::cout << "Displaying EVERYTHING" << std::endl;
         break;
     
     default:
         break;
     }
+}
+
+void Universe::nextBoid(){
+    current_boid++;
+    if(current_boid > m_boids.size())
+        current_boid = 0;
+
+    toggle_perception_state--;
+    togglePerception();
+    std::cout << "Switching boid" << std::endl;
+}
+
+void Universe::resetParams(){
+    for (size_t i = 0; i < m_boids.size(); ++i) {
+        Boids& b = m_boids[i];
+        b.align_w = b.align_w_def;
+        b.cohesion_w = b.cohesion_w_def;
+        b.separation_w = b.separation_w_def;
+        b.max_force = b.max_force_def;
+        b.max_velocity = b.max_velocity_def;
+    }
+    std::cout << "Parameters were RESET" << std::endl;
 }
 
 void Universe::increaseRadius(){
@@ -231,6 +271,170 @@ void Universe::decreaseRadius(){
         b.CreateBoidPerceptionRadius();
     }
     std::cout << "Perception radius set to: " << m_boids[0].radius_of_vision << std::endl;
+}
+
+void Universe::increaseBehaviorWeight(int behaviourType){
+    float max_val = 10;
+    float max_force_val = 5;
+    float max_velocity_val = 20;
+    float increment = 0.05;
+    switch (behaviourType)
+    {
+    // Alignment
+    case 0:
+        if(m_boids[0].align_w + increment > max_val){
+            std::cout << "Maximum align weight value set to: " << m_boids[0].align_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.align_w += increment;
+        }
+        std::cout << "Alignment weight set to: " << m_boids[0].align_w << std::endl;
+        break;
+    // Cohesion
+    case 1:
+        if(m_boids[0].cohesion_w + increment > max_val){
+            std::cout << "Maximum cohesion weight value set to: " << m_boids[0].cohesion_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.cohesion_w += increment;
+        }
+        std::cout << "Cohesion weight set to: " << m_boids[0].cohesion_w << std::endl;
+        break;
+    // Separation
+    case 2:
+        if(m_boids[0].separation_w + increment > max_val){
+            std::cout << "Maximum separation weight value set to: " << m_boids[0].separation_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.separation_w += increment;
+        }
+        std::cout << "Separation weight set to: " << m_boids[0].separation_w << std::endl;
+        break;
+    // Max force
+    case 3:
+        if(m_boids[0].max_force + increment > max_force_val){
+            std::cout << "Max force set to: " << m_boids[0].max_force << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.max_force += increment;
+        }
+        std::cout << "Max force set to: " << m_boids[0].max_force << std::endl;
+        break;
+    // Max vel
+    case 4:
+        if(m_boids[0].max_velocity + increment > max_velocity_val){
+            std::cout << "Max velocity set to: " << m_boids[0].max_velocity << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.max_velocity += increment;
+        }
+        std::cout << "Max velocity set to: " << m_boids[0].max_velocity << std::endl;
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void Universe::decreaseBehaviorWeight(int behaviourType){
+    float min_val = 0;
+    float increment = 0.05;
+    switch (behaviourType)
+    {
+    // Alignment
+    case 0:
+        if(m_boids[0].align_w - increment < min_val){
+            for (size_t i = 0; i < m_boids.size(); ++i) {
+                Boids& b = m_boids[i];
+                b.align_w = min_val;
+            }
+            std::cout << "Minimum align weight value set to: " << m_boids[0].align_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.align_w -= increment;
+        }
+        std::cout << "Alignment weight set to: " << m_boids[0].align_w << std::endl;
+        break;
+    // Cohesion
+    case 1:
+        if(m_boids[0].cohesion_w - increment < min_val){
+            for (size_t i = 0; i < m_boids.size(); ++i) {
+                Boids& b = m_boids[i];
+                b.cohesion_w = min_val;
+            }
+            std::cout << "Minimum cohesion weight value set to: " << m_boids[0].cohesion_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.cohesion_w -= increment;
+        }
+        std::cout << "Cohesion weight set to: " << m_boids[0].cohesion_w << std::endl;
+        break;
+    // Separation
+    case 2:
+        if(m_boids[0].separation_w - increment < min_val){
+            for (size_t i = 0; i < m_boids.size(); ++i) {
+                Boids& b = m_boids[i];
+                b.separation_w = min_val;
+            }
+            std::cout << "Minimum separation weight value set to: " << m_boids[0].separation_w << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.separation_w -= increment;
+        }
+        std::cout << "Separation weight set to: " << m_boids[0].separation_w << std::endl;
+        break;
+    // Max force
+    case 3:
+        if(m_boids[0].max_force - increment < min_val){
+            for (size_t i = 0; i < m_boids.size(); ++i) {
+                Boids& b = m_boids[i];
+                b.max_force = min_val;
+            }
+            std::cout << "Max force value set to: " << m_boids[0].max_force << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.max_force -= increment;
+        }
+        std::cout << "Max force set to: " << m_boids[0].max_force << std::endl;
+        break;
+    // Max velocity
+    case 4:
+        if(m_boids[0].max_velocity - increment < min_val){
+            for (size_t i = 0; i < m_boids.size(); ++i) {
+                Boids& b = m_boids[i];
+                b.max_velocity = min_val;
+            }
+            std::cout << "Max velocity value set to: " << m_boids[0].max_velocity << std::endl;
+            return;
+        }
+        for (size_t i = 0; i < m_boids.size(); ++i) {
+            Boids& b = m_boids[i];
+            b.max_velocity -= increment;
+        }
+        std::cout << "Max velocity set to: " << m_boids[0].max_velocity << std::endl;
+        break;
+    
+    default:
+        break;
+    }
 }
 
 float Universe::GetBoidX(int index) const {

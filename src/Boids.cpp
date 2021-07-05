@@ -1,15 +1,15 @@
 #include "Boids.h"
 
 Boids::Boids(){
-    max_velocity = 8;
-    max_force = 0.2;
+    max_velocity = max_velocity_def;
+    max_force = max_force_def;
     radius_of_vision = 100; // in pixels
     radius_of_vision_sq = radius_of_vision*radius_of_vision; // in pixels
     angle_of_vision = 180; // in 
 
-    align_w = 1;
-    cohesion_w = 0.15;
-    separation_w = 1.9;
+    align_w = align_w_def;
+    cohesion_w = cohesion_w_def;
+    separation_w = separation_w_def;
     enable_align = true;
     enable_cohesion = true;
     enable_separation = true;

@@ -27,7 +27,10 @@ public:
     void togglePerception();
     void increaseRadius();
     void decreaseRadius();
-
+    void nextBoid();
+    void increaseBehaviorWeight(int behaviourType);
+    void decreaseBehaviorWeight(int behaviourType);
+    void resetParams();
     Boids boid;
 private:
     // std::vector<Boid> m_boids;
