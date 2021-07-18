@@ -33,8 +33,39 @@ int main(int argc, char* argv[]) {
 
     enum class mulitKeyPress { ALIGN, COHESION, SEPARATION, MAX_FORCE, MAX_VEL, NONE };
     auto last_key = mulitKeyPress::NONE;
+
+    std::cout << "=========================================================" << std::endl;
+        std::cout << std::endl;
+        std::cout << "               It`s dem boooids!" << std::endl;
+        std::cout << std::endl;
+        std::cout << "  This is a simulation of flocking behaviour as described by Craig Reynolds!" << std::endl;
+        std::cout << " Each particle (boid) has 3 rules dictating its behaviour: " << std::endl;
+        std::cout << "     * Aligment - boids will want to align its angle with boids in their field of vision," << std::endl;
+        std::cout << "     * Cohesion - boids will want to fly towards the center position of the boids in their field of vision," << std::endl;
+        std::cout << "     * Separation - boids will want to fly away from the boids in their field of vision." << std::endl;
+        std::cout << std::endl;
+        std::cout << " You can toggle these behaviours as well as change the values of the paraters." << std::endl;
+        std::cout << "=========================================================" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Controls:" << std::endl;
+        std::cout << "         'A' - Toggle ALIGNMENT (Balanced)" << std::endl;
+        std::cout << "         'C' - Toggle COHESION" << std::endl;
+        std::cout << "         'S' - Toggle SEPARATION" << std::endl;
+        std::cout << "         'P' - Visualize boid perception" << std::endl;
+        std::cout << "         'I' - Increase perception radius" << std::endl;
+        std::cout << "         'O' - Decrease perception radius" << std::endl;
+        std::cout << "         'N' - Visualize perception on next boid" << std::endl;
+        std::cout << "         'R' - Reset parameters" << std::endl;
+        std::cout << "         'Q + UP/DOWN' - increase/decrease alignment factor" << std::endl;
+        std::cout << "         'W + UP/DOWN' - increase/decrease cohesion factor" << std::endl;
+        std::cout << "         'E + UP/DOWN' - increase/decrease separation factor" << std::endl;
+        std::cout << "         'F + UP/DOWN' - increase/decrease max force factor" << std::endl;
+        std::cout << "         'V + UP/DOWN' - increase/decrease max velocity factor" << std::endl;
+        std::cout << std::endl;
+
     // Main loop
     while(window.isOpen()) {
+        
 
         // Handle button events
         sf::Event event;
