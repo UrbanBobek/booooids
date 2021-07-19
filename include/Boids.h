@@ -44,7 +44,6 @@ public:
     void enableCohesion(bool enable) { enable_cohesion = enable; }
     void enableSeparation(bool enable) { enable_separation = enable; }
     
-
     // Drawing
     void CreateBoidShape();
     void CreateBoidDirectionVect();

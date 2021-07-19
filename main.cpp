@@ -153,82 +153,90 @@ int main(int argc, char* argv[]) {
                 default:
                     break;
                 }
-
             }
-      }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    universe.toggleAttractorForce();
+                } 
+                else if (event.mouseButton.button == sf::Mouse::Right) {
 
-      if(align_w && up_key){
-          if (last_key != mulitKeyPress::ALIGN) {
+                }
+      }
+        }
+
+        if(align_w && up_key){
+            if (last_key != mulitKeyPress::ALIGN) {
             universe.increaseBehaviorWeight(0);
             last_key = mulitKeyPress::ALIGN;
-          }
-      }
-      else if(align_w && down_key){
-          if (last_key != mulitKeyPress::ALIGN) {
+            }
+        }
+        else if(align_w && down_key){
+            if (last_key != mulitKeyPress::ALIGN) {
             universe.decreaseBehaviorWeight(0);
             last_key = mulitKeyPress::ALIGN;
-          }
-      }
-      else if(cohesion_w && up_key){
-          if (last_key != mulitKeyPress::COHESION) {
+            }
+        }
+        else if(cohesion_w && up_key){
+            if (last_key != mulitKeyPress::COHESION) {
             universe.increaseBehaviorWeight(1);
             last_key = mulitKeyPress::COHESION;
-          }
-      }
-      else if(cohesion_w && down_key){
-          if (last_key != mulitKeyPress::COHESION) {
+            }
+        }
+        else if(cohesion_w && down_key){
+            if (last_key != mulitKeyPress::COHESION) {
             universe.decreaseBehaviorWeight(1);
             last_key = mulitKeyPress::COHESION;
-          }
-      }
-      else if(separation_w && up_key){
-          if (last_key != mulitKeyPress::SEPARATION) {
+            }
+        }
+        else if(separation_w && up_key){
+            if (last_key != mulitKeyPress::SEPARATION) {
             universe.increaseBehaviorWeight(2);
             last_key = mulitKeyPress::SEPARATION;
-          }
-      }
-      else if(separation_w && down_key){
-          if (last_key != mulitKeyPress::SEPARATION) {
+            }
+        }
+        else if(separation_w && down_key){
+            if (last_key != mulitKeyPress::SEPARATION) {
             universe.decreaseBehaviorWeight(2);
             last_key = mulitKeyPress::SEPARATION;
-          }
-      }
-      else if(max_force && up_key){
-          if (last_key != mulitKeyPress::MAX_FORCE) {
+            }
+        }
+        else if(max_force && up_key){
+            if (last_key != mulitKeyPress::MAX_FORCE) {
             universe.increaseBehaviorWeight(3);
             last_key = mulitKeyPress::MAX_FORCE;
-          }
-      }
-      else if(max_force && down_key){
-          if (last_key != mulitKeyPress::MAX_FORCE) {
+            }
+        }
+        else if(max_force && down_key){
+            if (last_key != mulitKeyPress::MAX_FORCE) {
             universe.decreaseBehaviorWeight(3);
             last_key = mulitKeyPress::MAX_FORCE;
-          }
-      }
-      else if(max_vel && up_key){
-          if (last_key != mulitKeyPress::MAX_VEL) {
+            }
+        }
+        else if(max_vel && up_key){
+            if (last_key != mulitKeyPress::MAX_VEL) {
             universe.increaseBehaviorWeight(4);
             last_key = mulitKeyPress::MAX_VEL;
-          }
-      }
-      else if(max_vel && down_key){
-          if (last_key != mulitKeyPress::MAX_VEL) {
+            }
+        }
+        else if(max_vel && down_key){
+            if (last_key != mulitKeyPress::MAX_VEL) {
             universe.decreaseBehaviorWeight(4);
             last_key = mulitKeyPress::MAX_VEL;
-          }
-      }
-      else{
-          last_key = mulitKeyPress::NONE;
-      }
+            }
+        }
+        else{
+            last_key = mulitKeyPress::NONE;
+        }
 
-        
-
+        const sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
         
         // Apply boid relations and draw
         window.clear();
         for(int i = 0; i < steps_per_frame_normal; i++){
             const float opacity = float(i + 1) / float(steps_per_frame_normal);
             // const float opacity = 255;
+            universe.SetMousePos(mouse_pos);
+
             universe.step();
             universe.draw(window, opacity);
         }

@@ -12,6 +12,12 @@ Universe::Universe(size_t num_boids, int width, int height){
     current_boid = 0;
     toggle_perception_state = 0;
 
+    attractor_point_enabled = true;
+    cursor_radius = 10.0;
+    cursor = sf::CircleShape(cursor_radius);
+    cursor.setOrigin(cursor_radius, cursor_radius);
+    cursor.setFillColor(sf::Color(198, 0, 0, 125));
+
     // m_boids[0].SetDrawPerceptionRadius(true);
     // m_boids[0].SetDrawDirection(true);
 }
@@ -26,6 +32,14 @@ void Universe::step(){
         b.flock_behaviour(m_boids, steer_vec);
         b.acc[0] += steer_vec[0];
         b.acc[1] += steer_vec[1];
+
+        // Add other forces
+        if(attractor_point_enabled){
+            attaractor_force(b, steer_vec);
+            b.acc[0] += steer_vec[0];
+            b.acc[1] += steer_vec[1];
+        }
+        
 
         // if(abs(b.vel[0]) > linear_velocity) b.vel[0] = linear_velocity * b.vel[0] / abs(b.vel[0]);
         // if(abs(b.vel[1]) > linear_velocity) b.vel[1] = linear_velocity * b.vel[1] / abs(b.vel[1]);
@@ -84,6 +98,44 @@ void Universe::draw(sf::RenderWindow& window, float opacity) {
         b.drawBoid(window);
     }
 
+    //Draw cursor
+    if(attractor_point_enabled){
+        draw_cursor(window);
+    }
+
+
+}
+
+
+void Universe::attaractor_force(Boids boid, std::vector<float> &steer){
+    steer[0] = 0; steer[1] = 0;
+    if(check_mouse_position()){
+        float d = sqrt(pow(boid.pos[0] - mouse_pos.x, 2) + pow(boid.pos[1] - mouse_pos.y, 2));
+        std::vector<float> force_vect{(float) mouse_pos.x, (float) mouse_pos.y};
+        if(d < 300){
+            float G = 0.5;
+            substractVect(force_vect, boid.pos);
+            steer[0] = force_vect[0] * G / d;
+            steer[1] = force_vect[1] * G / d;
+        }
+    }
+    
+
+    
+    
+}
+
+void Universe::draw_cursor(sf::RenderWindow& window){
+    cursor.setPosition(mouse_pos.x, mouse_pos.y);
+    window.draw(cursor);
+}
+
+
+bool Universe::check_mouse_position(){
+    if(mouse_pos.x > 0 && mouse_pos.x < m_width && mouse_pos.y > 0 && mouse_pos.y < m_height)
+        return true;
+
+    return false;
 }
 
 void Universe::SetPopulation(size_t num_boids){
@@ -154,6 +206,14 @@ void  Universe::toggleSeparation(){
                 std::cout << "Separation DISABLED" << std::endl;
         }
     }
+}
+
+void Universe::toggleAttractorForce(){
+    attractor_point_enabled = !attractor_point_enabled;
+    if(attractor_point_enabled)
+        std::cout << "attractor force ENABLED" << std::endl;
+    else
+        std::cout << "attractor force DISABLED" << std::endl;
 }
 
 void  Universe::togglePerception(){
